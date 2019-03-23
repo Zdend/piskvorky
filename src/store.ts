@@ -9,14 +9,27 @@ interface PiskvorkyState {
   grid: GRID,
   player1: PlayerState,
   player2: PlayerState,
-  pausesPerGame: number
+  pausesPerGame: number,
+  turn: PLAYER,
+  board: Board
 }
+
+export interface Point {
+  x: number,
+  y: number,
+  state: SYMBOL | null
+}
+export interface Board {
+  [key: string]: Point
+};
 
 export interface PlayerState {
   id: PLAYER,
   name: string,
   pauseUsed: number,
-  symbol: SYMBOL
+  symbol: SYMBOL,
+  wins: number,
+  timePlayed: number
 }
 
 export function createPlayer(player: PLAYER, name: string, symbol: SYMBOL): PlayerState {
@@ -24,12 +37,22 @@ export function createPlayer(player: PLAYER, name: string, symbol: SYMBOL): Play
     id: player,
     name,
     pauseUsed: 0,
-    symbol
+    symbol,
+    wins: 0,
+    timePlayed: 0
   };
 }
 
-export function generateBoard(size: GRID): Array<Array<GRID | null>> {
-  return Array(size).fill(Array(size).fill(null));
+export function generateBoard(size: GRID): Board {
+  const grid = {};
+  for (let i = 0; i < size; i++) {
+    for (let j = 0; j < size; j++) {
+      const key = `${i}x${j}`;
+      grid[key] = { key, x: i, y: j, state: null };
+    }
+  }
+
+  return grid;
 }
 
 export default new Vuex.Store({
@@ -48,19 +71,24 @@ export default new Vuex.Store({
     },
     changeGrid(state, value: GRID) {
       state.grid = value;
+      state.board = generateBoard(value);
     },
     changePauses(state, value: number) {
       state.pausesPerGame = value;
     },
     changePlayer(state, player: PlayerState) {
-      if (!player.id) {
+      if (!Number.isInteger(player.id)) {
         throw new Error('Player ID is not specified');
       }
-      const playerProp = player.id as PLAYER === PLAYER.PLAYER1 ? 'player1' : 'player2';
+      const playerProp = (player.id as PLAYER) === PLAYER.PLAYER1 as PLAYER ? 'player1' : 'player2';
       const newState = { ...state[playerProp], ...player };
       state[playerProp] = newState;
     }
   },
   actions: {},
-  getters: {}
+  getters: {
+    getCells: (state) => (rowIndex) => {
+      return Object.values(state.board).filter(point => point.y === rowIndex);
+    }
+  }
 });
