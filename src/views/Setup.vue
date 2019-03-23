@@ -67,9 +67,9 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { State, Getter, Action, Mutation, namespace } from "vuex-class";
-import { LIMIT, Limit, GRID, PLAYER } from "../shared/constants";
+import { LIMIT, GRID, PLAYER } from "../shared/constants";
 import { getEnumValues } from "../shared/enum";
-import { PlayerState } from "../store";
+import { PlayerState, Limit, LimitInfo } from "../types/state";
 
 @Component({
   components: {}
@@ -92,7 +92,7 @@ export default class Setup extends Vue {
     return this.limit;
   }
   get limitOptions() {
-    return Object.values(LIMIT).map(l => ({
+    return Object.values(LIMIT).map((l: LimitInfo) => ({
       value: l.timeLimit,
       text: l.label
     }));

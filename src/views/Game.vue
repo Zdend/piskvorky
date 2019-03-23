@@ -16,19 +16,11 @@
 
     <b-row>
       <b-col>
-        <table class="board mt-4">
-          <tr v-for="row in grid" :key="row">
-            <td
-              v-for="cell in getCells(row)"
-              :key="cell.key"
-              class="board__cell"
-            >
-              <button type="button" class="board__cell-btn">
-                <i class="fa fa-times" />
-              </button>
-            </td>
-          </tr>
-        </table>
+        <board-component
+          :grid="grid"
+          :board="board"
+          v-on:point-placed="placePoint"
+        />
       </b-col>
     </b-row>
   </b-container>
@@ -37,12 +29,15 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { State, Getter, Action, Mutation, namespace } from "vuex-class";
-import { LIMIT, Limit, GRID, PLAYER } from "../shared/constants";
+import { LIMIT, GRID, PLAYER } from "../shared/constants";
 import { getEnumValues } from "../shared/enum";
-import { PlayerState, Board, Point } from "../store";
+import { PlayerState, Limit, Board, Point } from "../types/state";
+import BoardComponent from "@/components/Board.vue";
 
 @Component({
-  components: {}
+  components: {
+    BoardComponent
+  }
 })
 export default class Setup extends Vue {
   @State limit: number;
@@ -52,15 +47,12 @@ export default class Setup extends Vue {
   @State pausesPerGame: number;
   @State turn: PLAYER;
   @State board: Board;
-  @Getter getCells: Array<Point>;
   @Mutation changeLimit: Function;
   @Mutation changeGrid: Function;
   @Mutation changePlayer: Function;
   @Mutation changePauses: Function;
-
-  get currentPlayer() {
-    return this.turn === PLAYER.PLAYER1 ? this.player1 : this.player2;
-  }
+  @Getter currentPlayer: PlayerState;
+  @Action placePoint: Function;
 }
 </script>
 
@@ -79,39 +71,5 @@ h1 {
 }
 .player__wins {
   text-align: center;
-}
-
-.board {
-  margin: 0 auto;
-}
-.board__row {
-  padding: 0;
-  margin: 0;
-}
-
-.board__cell {
-  height: 40px;
-  width: 40px;
-  padding: 0;
-  margin: 0;
-  border: 1px solid black;
-  text-align: center;
-  overflow: hidden;
-}
-
-.board__cell-btn {
-  height: 100%;
-  width: 100%;
-  border: 0;
-  background: 0;
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    background: rgba(0, 0, 0, 0.4);
-  }
-
-  &:focus {
-    background: rgba(0, 0, 0, 0.2);
-  }
 }
 </style>

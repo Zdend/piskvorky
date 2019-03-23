@@ -1,10 +1,4 @@
-export interface LimitInfo {
-    label: string;
-    timeLimit: number;
-}
-export interface Limit {
-    [key: string]: LimitInfo
-}
+import { Limit } from '../types/state';
 
 export const LIMIT: Limit = {
     UNLIMITED: { label: 'Unlimited', timeLimit: Infinity },
