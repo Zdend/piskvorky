@@ -84,6 +84,7 @@ export default class Setup extends Vue {
   @Mutation changeGrid: Function;
   @Mutation changePlayer: Function;
   @Mutation changePauses: Function;
+  @Action playAgain: Function;
 
   set limitValue(value: number) {
     this.changeLimit(value);
@@ -133,6 +134,7 @@ export default class Setup extends Vue {
   }
 
   startGame() {
+    this.playAgain();
     this.$router.push("/game");
   }
 }

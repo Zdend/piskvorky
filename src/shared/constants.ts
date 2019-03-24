@@ -11,6 +11,7 @@ export const LIMIT: Limit = {
 };
 
 export enum GRID {
+    G5 = 5,
     G10 = 10,
     G15 = 15,
     G20 = 20,

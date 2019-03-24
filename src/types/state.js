@@ -7,6 +7,8 @@ export interface Limit {
   [key: string]: LimitInfo;
 }
 
+export type Points = Array<Point>;
+
 export interface PiskvorkyState {
   limit: number;
   grid: GRID;
@@ -14,7 +16,9 @@ export interface PiskvorkyState {
   player2: PlayerState;
   pausesPerGame: number;
   turn: PLAYER;
-  board: Board;
+  board: Points;
+  victor: PLAYER;
+  victoriousSequence: Points;
 }
 
 export interface Point {
@@ -22,10 +26,6 @@ export interface Point {
   x: number;
   y: number;
   state: SYMBOL | null;
-}
-
-export interface Board {
-  [key: string]: Point;
 }
 
 export interface PlayerState {

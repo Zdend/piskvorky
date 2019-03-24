@@ -1,51 +1,30 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import { LIMIT, GRID, SYMBOL, PLAYER } from './shared/constants';
-import { Limit, PlayerState, Board, Point } from './types/state';
+import { Limit, PlayerState, Board, Point, Points } from './types/state';
+import { createPlayer, generateBoard, getVictoriousMatch } from './shared/game';
 
 Vue.use(Vuex);
-
-export function createPlayer(player: PLAYER, name: string, symbol: SYMBOL): PlayerState {
-  return {
-    id: player,
-    name,
-    pauseUsed: 0,
-    symbol,
-    wins: 0,
-    timePlayed: 0
-  };
-}
-
-export function generateBoard(size: GRID): Board {
-  const grid = {};
-  for (let i = 0; i < size; i++) {
-    for (let j = 0; j < size; j++) {
-      const key = `${i}x${j}`;
-      grid[key] = { key, x: i, y: j, state: null };
-    }
-  }
-
-  return grid;
-}
-
 
 export default new Vuex.Store({
   state: {
     limit: LIMIT.UNLIMITED.timeLimit,
     grid: GRID.G15,
-    player1: createPlayer(PLAYER.PLAYER1, 'Red', SYMBOL.CIRCLE),
-    player2: createPlayer(PLAYER.PLAYER2, 'Blue', SYMBOL.CROSS),
+    player1: createPlayer(PLAYER.PLAYER1, 'Red', SYMBOL.CROSS),
+    player2: createPlayer(PLAYER.PLAYER2, 'Blue', SYMBOL.CIRCLE),
     pausesPerGame: 0,
     board: generateBoard(GRID.G15),
-    turn: PLAYER.PLAYER1
+    turn: PLAYER.PLAYER1,
+    victor: null,
+    victoriousSequence: null
   },
   mutations: {
     changeLimit(state, value: number) {
       state.limit = value;
     },
-    changeGrid(state, value: GRID) {
-      state.grid = value;
-      state.board = generateBoard(value);
+    changeGrid(state, value?: GRID) {
+      state.grid = value || state.grid;
+      state.board = generateBoard(value || state.grid);
     },
     changePauses(state, value: number) {
       state.pausesPerGame = value;
@@ -63,17 +42,41 @@ export default new Vuex.Store({
     },
     changeTurn(state, player: PLAYER) {
       state.turn = player;
-    }
+    },
+    changeVictor(state, player: PLAYER) {
+      state.victor = player;
+    },
+    changeVictoriousSequence(state, points: Points) {
+      state.victoriousSequence = points;
+    },
   },
   actions: {
     placePoint({ commit, state, getters }, point: Point) {
+      if (state.victor !== null) {
+        return;
+      }
       const player = getters.currentPlayer;
-      const newBoard = Object.values(state.board).map((p: Point) => {
+      const newBoard = state.board.map((p: Point) => {
         return p.key === point.key ? { ...point, state: player.symbol } : p;
       });
 
+      const matchingSequence = getVictoriousMatch(newBoard, player.symbol, state.grid);
+
       commit('changeBoard', newBoard);
+
+      if (matchingSequence) {
+        commit('changeVictor', player.id);
+        commit('changeVictoriousSequence', matchingSequence);
+        commit('changePlayer', { id: player.id, wins: player.wins + 1 });
+        return;
+      }
+
       commit('changeTurn', player.id === PLAYER.PLAYER1 ? PLAYER.PLAYER2 : PLAYER.PLAYER1);
+    },
+    playAgain({ commit, state }) {
+      commit('changeVictor', null);
+      commit('changeVictoriousSequence', null);
+      commit('changeGrid');
     }
   },
   getters: {

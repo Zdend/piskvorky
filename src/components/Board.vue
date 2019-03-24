@@ -1,16 +1,19 @@
 <template>
   <table class="board mt-4">
     <tr v-for="row in grid" :key="row">
-      <td v-for="cell in getCells(row)" :key="cell.key" class="board__cell">
+      <td v-for="cell in getCells(row - 1)" :key="cell.key" class="board__cell">
         <button
           type="button"
           class="board__cell-btn"
           @click="$emit('point-placed', cell)"
           :disabled="isSelected(cell.state)"
         >
-          <i class="fa fa-times board__cell-icon" v-if="isCross(cell.state)" />
           <i
-            class="far fa-circle board__cell-icon"
+            class="fa fa-times board__cell-icon text-danger"
+            v-if="isCross(cell.state)"
+          />
+          <i
+            class="far fa-circle board__cell-icon text-primary"
             v-if="isCircle(cell.state)"
           />
           <span v-if="cell.state === null">&nbsp;</span>
@@ -23,14 +26,15 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { GRID, SYMBOL } from "../shared/constants";
+import { Points } from "../types/state";
 
 @Component
-export default class Board extends Vue {
+export default class BoardComponent extends Vue {
   @Prop() private grid!: GRID;
-  @Prop() private board!: GRID;
+  @Prop() private board!: Points;
 
   getCells(rowIndex) {
-    return Object.values(this.board).filter(point => point.y === rowIndex);
+    return this.board.filter(point => point.y === rowIndex);
   }
 
   isCross(state: SYMBOL | null) {
@@ -82,12 +86,11 @@ export default class Board extends Vue {
   &:focus {
     background: rgba(0, 0, 0, 0.2);
   }
-  &:disabled {
-    color: black;
-  }
 }
 
 .board__cell-icon {
   font-size: 24px;
+  position: relative;
+  top: 2px;
 }
 </style>
