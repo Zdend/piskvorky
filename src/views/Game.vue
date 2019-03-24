@@ -42,7 +42,7 @@
             >
           </div>
           <div class="mt-4 text-center">
-            <router-link to="/">Back to Config</router-link>
+            <router-link to="/">Restart Game</router-link>
           </div>
         </b-col>
       </b-row>

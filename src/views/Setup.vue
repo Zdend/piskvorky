@@ -4,6 +4,10 @@
       <b-col col lg="3"></b-col>
       <b-col lg="6">
         <h1>Piškvorky</h1>
+        <h2>
+          The rules are simple! Connect 5 circles or crosses horizontally,
+          vertically or diagonally before your opponent does.
+        </h2>
         <b-form @submit.prevent="startGame">
           <b-form-group
             label="Time Limit:"
@@ -144,6 +148,11 @@ export default class Setup extends Vue {
 h1 {
   text-align: center;
   font-size: 4rem;
+}
+
+h2 {
+  font-size: 1.25rem;
+  text-align: center;
 }
 
 .setup__start-btn {
