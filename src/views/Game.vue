@@ -29,6 +29,7 @@
           <board-component
             :grid="grid"
             :board="board"
+            :victoriousSequence="victoriousSequence"
             v-on:point-placed="placePoint"
           />
 

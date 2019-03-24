@@ -4,7 +4,10 @@
       <td v-for="cell in getCells(row - 1)" :key="cell.key" class="board__cell">
         <button
           type="button"
-          class="board__cell-btn"
+          :class="{
+            'board__cell-btn': true,
+            'board__cell-btn--victorious': isVictorious(cell.key)
+          }"
           @click="$emit('point-placed', cell)"
           :disabled="isSelected(cell.state)"
         >
@@ -32,6 +35,7 @@ import { Points } from "../types/state";
 export default class BoardComponent extends Vue {
   @Prop() private grid!: GRID;
   @Prop() private board!: Points;
+  @Prop() private victoriousSequence!: Points;
 
   getCells(rowIndex) {
     return this.board.filter(point => point.y === rowIndex);
@@ -47,6 +51,13 @@ export default class BoardComponent extends Vue {
 
   isSelected(state: SYMBOL | null) {
     return state !== null;
+  }
+
+  isVictorious(key: string) {
+    return (
+      this.victoriousSequence &&
+      this.victoriousSequence.some(p => p.key === key && p.state !== null)
+    );
   }
 }
 </script>
@@ -74,7 +85,7 @@ export default class BoardComponent extends Vue {
   height: 100%;
   width: 100%;
   border: 0;
-  background: 0;
+  background: none;
   transition: all 0.2s ease-in-out;
   text-align: center;
   vertical-align: middle;
@@ -86,6 +97,11 @@ export default class BoardComponent extends Vue {
   &:focus {
     background: rgba(0, 0, 0, 0.2);
   }
+}
+
+.board__cell-btn--victorious {
+  background: rgb(253, 197, 93);
+  border: 2px solid orange;
 }
 
 .board__cell-icon {
