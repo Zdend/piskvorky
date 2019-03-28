@@ -1,5 +1,5 @@
 <template>
-  <table class="board mt-4">
+  <table class="board mt-4" :style="tableStyle">
     <tr v-for="row in grid" :key="row">
       <td v-for="cell in getCells(row - 1)" :key="cell.key" class="board__cell">
         <button
@@ -58,6 +58,9 @@ export default class BoardComponent extends Vue {
       this.victoriousSequence &&
       this.victoriousSequence.some(p => p.key === key && p.state !== null)
     );
+  }
+  get tableStyle() {
+    return { width: `${this.grid * 40}px` };
   }
 }
 </script>

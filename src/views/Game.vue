@@ -23,32 +23,28 @@
         </b-col>
       </b-row>
     </b-container>
-    <b-container fluid>
-      <b-row>
-        <b-col>
-          <board-component
-            :grid="grid"
-            :board="board"
-            :victoriousSequence="victoriousSequence"
-            v-on:point-placed="placePoint"
-          />
+    <div>
+      <board-component
+        :grid="grid"
+        :board="board"
+        :victoriousSequence="victoriousSequence"
+        v-on:point-placed="placePoint"
+      />
 
-          <div class="mt-4 text-center">
-            <b-button
-              size="lg"
-              type="button"
-              variant="primary"
-              @click="playAgain"
-              v-if="victor !== null"
-              >Play Again</b-button
-            >
-          </div>
-          <div class="mt-4 text-center">
-            <router-link to="/">Change Rules</router-link>
-          </div>
-        </b-col>
-      </b-row>
-    </b-container>
+      <div class="mt-4 text-center">
+        <b-button
+          size="lg"
+          type="button"
+          variant="primary"
+          @click="playAgain"
+          v-if="victor !== null"
+          >Play Again</b-button
+        >
+      </div>
+      <div class="mt-4 text-center">
+        <router-link to="/">Change Rules</router-link>
+      </div>
+    </div>
   </div>
 </template>
 
