@@ -4,7 +4,7 @@
       <b-col col lg="3"></b-col>
       <b-col lg="6">
         <h1>Piškvorky</h1>
-        <h2>
+        <h2 class="my-5">
           The rules are simple! Connect 5 circles or crosses horizontally,
           vertically or diagonally before your opponent does.
         </h2>
@@ -18,19 +18,6 @@
               v-model="limitValue"
               :options="limitOptions"
               id="limitInput"
-            />
-          </b-form-group>
-
-          <b-form-group
-            label="Pauses:"
-            label-for="pausesInput"
-            description="Pauses per player per game"
-          >
-            <b-form-input
-              type="number"
-              v-model="pauses"
-              id="pausesInput"
-              autocomplete="off"
             />
           </b-form-group>
 
@@ -66,7 +53,7 @@
             type="submit"
             size="lg"
             variant="primary"
-            class="setup__start-btn"
+            class="setup__start-btn mt-3"
             >Start</b-button
           >
         </b-form>
@@ -91,7 +78,6 @@ export default class Setup extends Vue {
   @State grid: GRID;
   @State player1: PlayerState;
   @State player2: PlayerState;
-  @State pausesPerGame: number;
   @Mutation changeLimit: Function;
   @Mutation changeGrid: Function;
   @Mutation changePlayer: Function;
@@ -136,13 +122,6 @@ export default class Setup extends Vue {
   }
   set player2Name(value: string) {
     this.changePlayer({ id: PLAYER.PLAYER2, name: value });
-  }
-
-  get pauses() {
-    return this.pausesPerGame;
-  }
-  set pauses(value: number) {
-    this.changePauses(value);
   }
 
   startGame() {

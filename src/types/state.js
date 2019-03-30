@@ -14,7 +14,6 @@ export interface PiskvorkyState {
   grid: GRID;
   player1: PlayerState;
   player2: PlayerState;
-  pausesPerGame: number;
   turn: PLAYER;
   board: Points;
   victor: PLAYER;
@@ -32,7 +31,6 @@ export interface Point {
 export interface PlayerState {
   id: PLAYER;
   name: string;
-  pauseUsed: number;
   symbol: SYMBOL;
   wins: number;
 }

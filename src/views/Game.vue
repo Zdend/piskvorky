@@ -17,7 +17,7 @@
       v-on:point-placed="placePoint"
     />
 
-    <div class="mt-4 text-center">
+    <div class="setup__footer">
       <b-button
         size="lg"
         type="button"
@@ -26,10 +26,14 @@
         v-if="victor !== null"
         >Play Again</b-button
       >
-    </div>
 
-    <div class="mt-4 text-center">
-      <router-link to="/">Change Rules</router-link>
+      <div
+        :class="{
+          'mt-4': victor !== null
+        }"
+      >
+        <router-link to="/">Change Rules</router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -72,11 +76,23 @@ export default class Setup extends Vue {
       width: `${this.grid * 40}px`
     };
   }
+
+  mounted() {
+    const el = [document.documentElement, document.body].filter(Boolean)[0];
+    el.scrollLeft = el.scrollWidth / 2 - el.clientWidth / 2;
+  }
 }
 </script>
 
 <style scoped lang="scss">
 .setup__start-btn {
   width: 100%;
+}
+.setup__footer {
+  position: fixed;
+  width: 100vw;
+  text-align: center;
+  margin-top: 2rem;
+  left: 0;
 }
 </style>

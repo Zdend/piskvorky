@@ -12,7 +12,6 @@ export default new Vuex.Store({
     grid: GRID.G15,
     player1: createPlayer(PLAYER.PLAYER1, 'Red', SYMBOL.CROSS),
     player2: createPlayer(PLAYER.PLAYER2, 'Blue', SYMBOL.CIRCLE),
-    pausesPerGame: 0,
     board: generateBoard(GRID.G15),
     turn: PLAYER.PLAYER1,
     victor: null,
@@ -25,9 +24,6 @@ export default new Vuex.Store({
     changeGrid(state, value?: GRID) {
       state.grid = value || state.grid;
       state.board = generateBoard(value || state.grid);
-    },
-    changePauses(state, value: number) {
-      state.pausesPerGame = value;
     },
     changePlayer(state, player: PlayerState) {
       if (!Number.isInteger(player.id)) {
