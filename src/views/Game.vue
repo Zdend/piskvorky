@@ -1,5 +1,5 @@
 <template>
-  <div :style="tableStyle" class="mx-auto">
+  <div :style="tableStyle" class="mx-auto pb-5">
     <score
       :player1="player1"
       :player2="player2"
@@ -17,7 +17,17 @@
       v-on:point-placed="placePoint"
     />
 
-    <div class="setup__footer">
+    <div class="setup__footer" :style="tableStyle">
+      <router-link
+        to="/"
+        tag="b-button"
+        size="lg"
+        type="button"
+        variant="secondary"
+      >
+        Change Rules
+      </router-link>
+
       <b-button
         size="lg"
         type="button"
@@ -26,14 +36,6 @@
         v-if="victor !== null"
         >Play Again</b-button
       >
-
-      <div
-        :class="{
-          'mt-4': victor !== null
-        }"
-      >
-        <router-link to="/">Change Rules</router-link>
-      </div>
     </div>
   </div>
 </template>
@@ -90,9 +92,16 @@ export default class Setup extends Vue {
 }
 .setup__footer {
   position: fixed;
-  width: 100vw;
-  text-align: center;
-  margin-top: 2rem;
   left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 1rem;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  max-width: 100vw;
+  min-width: 400px;
 }
 </style>
