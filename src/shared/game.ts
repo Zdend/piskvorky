@@ -84,7 +84,8 @@ const find5InSequence = (sequence: Points, symbol: SYMBOL): Points => {
 
 export const getVictoriousMatch = (board: Points, symbol: SYMBOL, grid: GRID): boolean => {
     const sequences = findSequences(board, grid).filter(s => s.filter(p => p.state === symbol).length > 4);
-    return sequences.find(sequence => find5InSequence(sequence, symbol));
+    const matchedSequence = sequences.find(sequence => find5InSequence(sequence, symbol));
+    return matchedSequence ? find5InSequence(matchedSequence, symbol) : null;
 };
 
 export function createPlayer(player: PLAYER, name: string, symbol: SYMBOL): PlayerState {

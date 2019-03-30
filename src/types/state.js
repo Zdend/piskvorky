@@ -19,6 +19,7 @@ export interface PiskvorkyState {
   board: Points;
   victor: PLAYER;
   victoriousSequence: Points;
+  timePlayed: number;
 }
 
 export interface Point {
@@ -34,5 +35,4 @@ export interface PlayerState {
   pauseUsed: number;
   symbol: SYMBOL;
   wins: number;
-  timePlayed: number;
 }

@@ -1,13 +1,17 @@
 <template>
-  <table class="board mt-4" :style="tableStyle">
+  <table class="board">
     <tr v-for="row in grid" :key="row">
-      <td v-for="cell in getCells(row - 1)" :key="cell.key" class="board__cell">
+      <td
+        v-for="cell in getCells(row - 1)"
+        :key="cell.key"
+        :class="{
+          board__cell: true,
+          'board__cell--victorious': isVictorious(cell.key)
+        }"
+      >
         <button
           type="button"
-          :class="{
-            'board__cell-btn': true,
-            'board__cell-btn--victorious': isVictorious(cell.key)
-          }"
+          class="board__cell-btn"
           @click="$emit('point-placed', cell)"
           :disabled="isSelected(cell.state)"
         >
@@ -59,15 +63,13 @@ export default class BoardComponent extends Vue {
       this.victoriousSequence.some(p => p.key === key && p.state !== null)
     );
   }
-  get tableStyle() {
-    return { width: `${this.grid * 40}px` };
-  }
 }
 </script>
 
 <style scoped lang="scss">
 .board {
-  margin: 0 auto;
+  margin: 4rem auto 0 auto;
+  width: 100%;
 }
 .board__row {
   padding: 0;
@@ -102,9 +104,8 @@ export default class BoardComponent extends Vue {
   }
 }
 
-.board__cell-btn--victorious {
+.board__cell--victorious {
   background: rgb(253, 197, 93);
-  border: 2px solid orange;
 }
 
 .board__cell-icon {

@@ -47,11 +47,19 @@
           </b-form-group>
 
           <b-form-group label="Player 1 Name" label-for="player1Name">
-            <b-form-input v-model="player1Name" id="player1Name" />
+            <b-form-input
+              v-model="player1Name"
+              id="player1Name"
+              maxlength="6"
+            />
           </b-form-group>
 
           <b-form-group label="Player 2 Name" label-for="player2Name">
-            <b-form-input v-model="player2Name" id="player2Name" />
+            <b-form-input
+              v-model="player2Name"
+              id="player2Name"
+              maxlength="6"
+            />
           </b-form-group>
 
           <b-button

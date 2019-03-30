@@ -40,8 +40,8 @@ export default new Vuex.Store({
     changeBoard(state, board: Board) {
       state.board = board;
     },
-    changeTurn(state, player: PLAYER) {
-      state.turn = player;
+    changeTurn(state) {
+      state.turn = state.turn === PLAYER.PLAYER1 ? PLAYER.PLAYER2 : PLAYER.PLAYER1;
     },
     changeVictor(state, player: PLAYER) {
       state.victor = player;
@@ -71,12 +71,13 @@ export default new Vuex.Store({
         return;
       }
 
-      commit('changeTurn', player.id === PLAYER.PLAYER1 ? PLAYER.PLAYER2 : PLAYER.PLAYER1);
+      commit('changeTurn');
     },
     playAgain({ commit, state }) {
       commit('changeVictor', null);
       commit('changeVictoriousSequence', null);
       commit('changeGrid');
+      commit('changeTurn');
     }
   },
   getters: {
