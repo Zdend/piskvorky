@@ -101,6 +101,5 @@ export default class Setup extends Vue {
   display: flex;
   justify-content: space-between;
   max-width: 100vw;
-  min-width: 400px;
 }
 </style>

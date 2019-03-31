@@ -88,7 +88,6 @@ export default class BoardComponent extends Vue {
   height: 85px;
   padding: 1rem 0.5rem;
   z-index: 1;
-  min-width: 400px;
 }
 .score__col {
   flex: 25%;

@@ -11,7 +11,8 @@ export default new Router({
     {
       path: "/",
       name: "home",
-      component: () => import(/* webpackChunkName: "setup" */ "./views/Setup.vue")
+      component: () =>
+        import(/* webpackChunkName: "setup" */ "./views/Setup.vue")
     },
     {
       path: "/game",
