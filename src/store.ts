@@ -60,8 +60,8 @@ export default new Vuex.Store({
 
       const matchingSequence = getVictoriousMatch(
         newBoard,
-        player.symbol,
-        state.grid
+        state.grid,
+        player.symbol
       );
 
       commit("changeBoard", newBoard);

@@ -8,6 +8,9 @@ export interface Limit {
 }
 
 export type Points = Array<Point>;
+export interface PointMap {
+  [key: string]: Point;
+}
 
 export interface PiskvorkyState {
   limit: number;

@@ -96,10 +96,17 @@ export default class Setup extends Vue {
   bottom: 0;
   margin: 0 auto;
   background: rgba(255, 255, 255, 0.9);
-  padding: 1rem;
+  padding: 1rem 0.5rem;
   z-index: 1;
   display: flex;
   justify-content: space-between;
   max-width: 100vw;
+}
+
+@media screen and (max-width: 600px) {
+  .setup__footer {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 }
 </style>

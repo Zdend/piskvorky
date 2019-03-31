@@ -1,4 +1,4 @@
-import { Points, PlayerState, Point } from "../types/state";
+import { Points, PlayerState, Point, PointMap } from "../types/state";
 import { SYMBOL, PLAYER, GRID } from "../shared/constants";
 
 const createIndexes = (grid: GRID) =>
@@ -6,108 +6,151 @@ const createIndexes = (grid: GRID) =>
     .fill(0)
     .map((e, i) => e + i);
 
-const findPointByCoor = (points: Points, x: number, y: number) =>
-  points.find(p => p.x === x && p.y === y);
+const findPointByCoor = (
+  points: PointMap,
+  x: number,
+  y: number
+): Point | undefined => points[`${x}x${y}`];
 
-const findAndAdd = (points: Points, x: number, y: number, matches: Points) => {
+const findAndAdd = (
+  points: PointMap,
+  x: number,
+  y: number,
+  matches: Points,
+  symbol: SYMBOL
+) => {
   const point = findPointByCoor(points, x, y);
-  if (point) {
+  if (!point || point.state !== symbol) {
+    matches.splice(0, matches.length);
+    return false;
+  }
+  if (point.state === symbol) {
     matches.push(point);
   }
+  if (matches.length > 4) {
+    return true;
+  }
 };
 
-const getUpX = (points: Points, grid: GRID) => (startX: number): Points => {
+const getUpX = (points: PointMap, grid: GRID, symbol: SYMBOL) => (
+  startX: number
+): Points => {
   const sequence = [];
   for (let x = startX, y = grid - 1; x < grid; x++, y--) {
-    findAndAdd(points, x, y, sequence);
+    if (findAndAdd(points, x, y, sequence, symbol)) {
+      return sequence;
+    }
   }
-  return sequence;
+  return null;
 };
 
-const getDownY = (points: Points, grid: GRID) => (startY: number): Points => {
+const getDownY = (points: PointMap, grid: GRID, symbol: SYMBOL) => (
+  startY: number
+): Points => {
   const sequence = [];
   for (let x = 0, y = startY; y < grid; y++, x++) {
-    findAndAdd(points, x, y, sequence);
+    if (findAndAdd(points, x, y, sequence, symbol)) {
+      return sequence;
+    }
   }
-  return sequence;
+  return null;
 };
 
-const getDownX = (points: Points, grid: GRID) => (startX: number): Points => {
+const getDownX = (points: PointMap, grid: GRID, symbol: SYMBOL) => (
+  startX: number
+): Points => {
   const sequence = [];
   for (let x = startX, y = 0; x < grid; x++, y++) {
-    findAndAdd(points, x, y, sequence);
+    if (findAndAdd(points, x, y, sequence, symbol)) {
+      return sequence;
+    }
   }
-  return sequence;
+  return null;
 };
 
-const getUpY = (points: Points, grid: GRID) => (endY: number): Points => {
+const getUpY = (points: PointMap, grid: GRID, symbol: SYMBOL) => (
+  endY: number
+): Points => {
   const sequence = [];
   for (let x = 0, y = grid - endY - 1; y >= 0; y--, x++) {
-    findAndAdd(points, x, y, sequence);
+    if (findAndAdd(points, x, y, sequence, symbol)) {
+      return sequence;
+    }
   }
-  return sequence;
+  return null;
 };
 
-const getRow = (points: Points, grid: GRID) => (row: number): Points =>
-  points.filter(p => p.y === row);
-const getColumn = (points: Points, grid: GRID) => (column: number): Points =>
-  points.filter(p => p.x === column);
+const getRow = (points: PointMap, grid: GRID, symbol: SYMBOL) => (
+  row: number
+): Points => {
+  const sequence = [];
+  for (let x = 0; x < grid; x++) {
+    if (findAndAdd(points, x, row, sequence, symbol)) {
+      return sequence;
+    }
+  }
+  return null;
+};
 
-const createCombineResults = (grid: GRID) => (
-  callback: (number) => Points
-): Array<Points> => {
+const getColumn = (points: PointMap, grid: GRID, symbol: SYMBOL) => (
+  column: number
+): Points => {
+  const sequence = [];
+  for (let y = 0; y < grid; y++) {
+    if (findAndAdd(points, column, y, sequence, symbol)) {
+      return sequence;
+    }
+  }
+  return null;
+};
+
+const createCombineResults = (
+  pointMap: PointMap,
+  grid: GRID,
+  symbol: SYMBOL
+) => (callback: (index: number) => Points): Array<Points> => {
   const indexes = createIndexes(grid);
-  return indexes.reduce((r, index) => {
-    const result = r.push(callback(index));
-    return r;
-  }, []);
+  const initiatedCallback = callback(pointMap, grid, symbol);
+  for (let i = 0; i < grid; i++) {
+    const matchedSequence = initiatedCallback(i);
+    if (Array.isArray(matchedSequence) && matchedSequence.length > 4) {
+      return matchedSequence;
+    }
+  }
+  return null;
 };
 
-const findSequences = (points: Points, grid: GRID): Array<Points> => {
-  const combineResults = createCombineResults(grid);
-  const bottomLeftToTopRight = combineResults(getUpX(points, grid)).concat(
-    combineResults(getDownY(points, grid))
-  );
-  const topLeftToBottomRight = combineResults(getDownX(points, grid)).concat(
-    combineResults(getUpY(points, grid))
-  );
-  const straightSequences = combineResults(getRow(points, grid)).concat(
-    combineResults(getColumn(points, grid))
-  );
-  const diagonalSequences = bottomLeftToTopRight
-    .concat(topLeftToBottomRight)
-    .filter(s => s.length > 4);
-  const sequences = straightSequences.concat(diagonalSequences);
-  return sequences;
-};
-
-const find5InSequence = (sequence: Points, symbol: SYMBOL): Points => {
-  const result = sequence.reduce((matches, point) => {
-    if (matches.length === 5) {
-      return matches;
+const findFirstFive = (generateSequences: Function) => (
+  ...callbacks
+): Array<Points> | null => {
+  for (let cb of callbacks) {
+    const sequence = generateSequences(cb);
+    if (sequence) {
+      return sequence;
     }
-    if (point.state === symbol) {
-      matches.push(point);
-    } else {
-      matches = [];
-    }
-    return matches;
-  }, []);
-  return result.length > 4 ? result : null;
+  }
+  return null;
 };
 
 export const getVictoriousMatch = (
-  board: Points,
-  symbol: SYMBOL,
-  grid: GRID
-): boolean => {
-  const sequences = findSequences(board, grid).filter(
-    s => s.filter(p => p.state === symbol).length > 4
+  points: Points,
+  grid: GRID,
+  symbol: SYMBOL
+): Array<Points> | null => {
+  const markedPoints = points.filter(p => p.state != null);
+  const pointMap = markedPoints.reduce((result, point) => {
+    result[point.key] = point;
+    return result;
+  }, {});
+  const generateSequences = createCombineResults(pointMap, grid, symbol);
+  return findFirstFive(generateSequences)(
+    getUpX,
+    getDownY,
+    getDownX,
+    getUpY,
+    getRow,
+    getColumn
   );
-  const matchedSequence = sequences.find(sequence =>
-    find5InSequence(sequence, symbol)
-  );
-  return matchedSequence ? find5InSequence(matchedSequence, symbol) : null;
 };
 
 export function createPlayer(
