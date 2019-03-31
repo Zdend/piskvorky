@@ -70,9 +70,8 @@ export default class Setup extends Vue {
   @Action playAgain: Function;
   @Mutation changeTurn: Function;
 
-  get symbol() {
-    return SYMBOL;
-  }
+  private symbol: typeof SYMBOL = SYMBOL;
+
   get tableStyle() {
     return {
       width: `${this.grid * 40}px`

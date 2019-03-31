@@ -38,9 +38,9 @@ export default class BoardComponent extends Vue {
   @Prop() private limit!: number;
   @Prop() private changeTurn!: Function;
 
-  timeLeft = this.limit;
-  symbol = SYMBOL;
-  interval = null;
+  private timeLeft: number = this.limit;
+  private symbol: typeof SYMBOL = SYMBOL;
+  private interval: number | null = null;
 
   get timeLeftReadable() {
     return this.timeLeft < Infinity ? `${this.timeLeft}s` : "";
