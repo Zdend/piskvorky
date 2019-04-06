@@ -32,11 +32,14 @@ const findAndAdd = (
   }
 };
 
-const getUpX = (points: PointMap, grid: GRID, symbol: SYMBOL) => (
-  startX: number
+const getDownLeft = (
+  points: PointMap,
+  point: Point,
+  grid: GRID,
+  symbol: SYMBOL
 ): Points => {
   const sequence = [];
-  for (let x = startX, y = grid - 1; x < grid; x++, y--) {
+  for (let x = point.x + 5, y = point.y - 5; y < point.y + 5; y++, x--) {
     if (findAndAdd(points, x, y, sequence, symbol)) {
       return sequence;
     }
@@ -44,11 +47,14 @@ const getUpX = (points: PointMap, grid: GRID, symbol: SYMBOL) => (
   return null;
 };
 
-const getDownY = (points: PointMap, grid: GRID, symbol: SYMBOL) => (
-  startY: number
+const getDownRight = (
+  points: PointMap,
+  point: Point,
+  grid: GRID,
+  symbol: SYMBOL
 ): Points => {
   const sequence = [];
-  for (let x = 0, y = startY; y < grid; y++, x++) {
+  for (let x = point.x - 5, y = point.y - 5; x < point.x + 5; x++, y++) {
     if (findAndAdd(points, x, y, sequence, symbol)) {
       return sequence;
     }
@@ -56,48 +62,30 @@ const getDownY = (points: PointMap, grid: GRID, symbol: SYMBOL) => (
   return null;
 };
 
-const getDownX = (points: PointMap, grid: GRID, symbol: SYMBOL) => (
-  startX: number
+const getRow = (
+  points: PointMap,
+  point: Point,
+  grid: GRID,
+  symbol: SYMBOL
 ): Points => {
   const sequence = [];
-  for (let x = startX, y = 0; x < grid; x++, y++) {
-    if (findAndAdd(points, x, y, sequence, symbol)) {
+  for (let x = point.x - 5; x < point.x + 5; x++) {
+    if (findAndAdd(points, x, point.y, sequence, symbol)) {
       return sequence;
     }
   }
   return null;
 };
 
-const getUpY = (points: PointMap, grid: GRID, symbol: SYMBOL) => (
-  endY: number
+const getColumn = (
+  points: PointMap,
+  point: Point,
+  grid: GRID,
+  symbol: SYMBOL
 ): Points => {
   const sequence = [];
-  for (let x = 0, y = grid - endY - 1; y >= 0; y--, x++) {
-    if (findAndAdd(points, x, y, sequence, symbol)) {
-      return sequence;
-    }
-  }
-  return null;
-};
-
-const getRow = (points: PointMap, grid: GRID, symbol: SYMBOL) => (
-  row: number
-): Points => {
-  const sequence = [];
-  for (let x = 0; x < grid; x++) {
-    if (findAndAdd(points, x, row, sequence, symbol)) {
-      return sequence;
-    }
-  }
-  return null;
-};
-
-const getColumn = (points: PointMap, grid: GRID, symbol: SYMBOL) => (
-  column: number
-): Points => {
-  const sequence = [];
-  for (let y = 0; y < grid; y++) {
-    if (findAndAdd(points, column, y, sequence, symbol)) {
+  for (let y = point.y - 5; y < point.y + 5; y++) {
+    if (findAndAdd(points, point.x, y, sequence, symbol)) {
       return sequence;
     }
   }
@@ -106,16 +94,16 @@ const getColumn = (points: PointMap, grid: GRID, symbol: SYMBOL) => (
 
 const createCombineResults = (
   pointMap: PointMap,
+  point: Point,
   grid: GRID,
   symbol: SYMBOL
-) => (callback: (index: number) => Points): Array<Points> => {
+) => (
+  callback: (index: number, point: Point, grid: GRID, symbol: SYMBOL) => Points
+): Array<Points> => {
   const indexes = createIndexes(grid);
-  const initiatedCallback = callback(pointMap, grid, symbol);
-  for (let i = 0; i < grid; i++) {
-    const matchedSequence = initiatedCallback(i);
-    if (Array.isArray(matchedSequence) && matchedSequence.length > 4) {
-      return matchedSequence;
-    }
+  const matchedSequence = callback(pointMap, point, grid, symbol);
+  if (Array.isArray(matchedSequence) && matchedSequence.length > 4) {
+    return matchedSequence;
   }
   return null;
 };
@@ -133,21 +121,22 @@ const findFirstFive = (generateSequences: Function) => (
 };
 
 export const getVictoriousMatch = (
+  point: Point,
   points: Points,
   grid: GRID,
   symbol: SYMBOL
 ): Array<Points> | null => {
-  const markedPoints = points.filter(p => p.state != null);
-  const pointMap = markedPoints.reduce((result, point) => {
-    result[point.key] = point;
+  const pointMap = points.reduce((result, currentPoint) => {
+    if (currentPoint.state !== null) {
+      result[currentPoint.key] = currentPoint;
+    }
     return result;
   }, {});
-  const generateSequences = createCombineResults(pointMap, grid, symbol);
+
+  const generateSequences = createCombineResults(pointMap, point, grid, symbol);
   return findFirstFive(generateSequences)(
-    getUpX,
-    getDownY,
-    getDownX,
-    getUpY,
+    getDownLeft,
+    getDownRight,
     getRow,
     getColumn
   );

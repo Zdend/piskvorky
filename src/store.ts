@@ -59,6 +59,7 @@ export default new Vuex.Store({
       });
 
       const matchingSequence = getVictoriousMatch(
+        point,
         newBoard,
         state.grid,
         player.symbol
